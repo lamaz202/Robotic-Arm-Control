@@ -1,14 +1,17 @@
 let recognition;
 let finalTranscript = '';
+const textInput = document.getElementById('textInput');
 
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const startButton = document.getElementById('startButton');
 const stopButton = document.getElementById('stopButton');
 const resultDiv = document.getElementById('result');
+const saveForm = document.getElementById('saveForm');
 
 startButton.addEventListener('click', startRecording);
 stopButton.addEventListener('click', stopRecording);
+saveForm.addEventListener('submit', saveText);
 
 function startRecording() {
   finalTranscript = '';
@@ -31,6 +34,9 @@ function startRecording() {
     // Display interim and final results
     resultDiv.innerHTML = `<p>${interimTranscript}</p>`;
     resultDiv.innerHTML += `<p><strong>${finalTranscript}</strong></p>`;
+
+    // Set the converted text in the hidden input field
+    textInput.value = finalTranscript;
   };
 
   recognition.onstart = () => {
@@ -51,4 +57,23 @@ function stopRecording() {
     recognition.stop();
     recognition = null;
   }
+}
+
+function saveText(event) {
+  event.preventDefault();
+  const text = textInput.value;
+
+  // Send the text to the PHP script
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', 'save.php', true);
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      console.log('Text saved successfully');
+    }
+  };
+  xhr.send(`text=${encodeURIComponent(text)}`);
+
+  // Clear the input field
+  textInput.value = '';
 }
