@@ -62,17 +62,17 @@ function stopRecording() {
 function saveText(event) {
   event.preventDefault();
   const text = textInput.value;
-
+  alert("text");
   // Send the text to the PHP script
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', 'save.php', true);
+  xhr.open('POST', '', true);
   xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   xhr.onreadystatechange = function () {
     if (xhr.readyState === 4 && xhr.status === 200) {
       console.log('Text saved successfully');
     }
   };
-  xhr.send(`text=${encodeURIComponent(text)}`);
+  xhr.send(`s=${encodeURIComponent(text)}`);
 
   // Clear the input field
   textInput.value = '';
